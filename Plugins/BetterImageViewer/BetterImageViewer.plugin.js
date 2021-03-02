@@ -444,7 +444,7 @@ module.exports = (() => {
             this._handleMouseMove(e.clientX, e.clientY);
             this._handleSaveLensWHChangeDC.delay();
           } else {
-            this.state.zoom = Math.min(this.state.zoom * 1.1, 60);
+            this.state.zoom = Math.min(this.state.zoom * 1.1, Infinity);
             this.updateZoomController({ zoom: this.state.zoom });
             if (scrollToggle && !this.state.zooming) {
               this._handleMouseMove(e.clientX, e.clientY, true);
@@ -460,9 +460,9 @@ module.exports = (() => {
             this._handleSaveLensWHChangeDC.delay();
           } else {
             const nextZoom = this.state.zoom * 0.9;
-            this.state.zoom = Math.max(nextZoom, 1);
+            this.state.zoom = Math.max(nextZoom, 0);
             this.updateZoomController({ zoom: this.state.zoom });
-            if (scrollToggle && nextZoom < 1) this.setState({ zooming: false });
+            if (scrollToggle && nextZoom < 0) this.setState({ zooming: false });
           }
         }
       }
