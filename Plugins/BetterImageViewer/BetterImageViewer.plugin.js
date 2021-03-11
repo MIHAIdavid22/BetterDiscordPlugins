@@ -1,4 +1,4 @@
-//META{"name":"BetterImageViewer","source":"https://github.com/1Lighty/BetterDiscordPlugins/blob/master/Plugins/BetterImageViewer/BetterImageViewer.plugin.js","website":"https://1lighty.github.io/BetterDiscordStuff/?plugin=BetterImageViewer","authorId":"239513071272329217","invite":"NYvWdN5","donate":"https://paypal.me/lighty13"}*//
+//META{"name":"BetterImageViewer","source":"https://github.com/MIHAIdavid22/BetterDiscordPlugins/blob/patch-1/Plugins/BetterImageViewer/BetterImageViewer.plugin.js","website":"https://1lighty.github.io/BetterDiscordStuff/?plugin=BetterImageViewer","authorId":"239513071272329217","invite":"NYvWdN5","donate":"https://paypal.me/lighty13"}*//
 /*@cc_on
 @if (@_jscript)
 
