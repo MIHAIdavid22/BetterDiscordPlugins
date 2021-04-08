@@ -1,4 +1,11 @@
-//META{"name":"BetterImageViewer","source":"https://github.com/MIHAIdavid22/BetterDiscordPlugins/blob/patch-1/Plugins/BetterImageViewer/BetterImageViewer.plugin.js","website":"https://1lighty.github.io/BetterDiscordStuff/?plugin=BetterImageViewer","authorId":"239513071272329217","invite":"NYvWdN5","donate":"https://paypal.me/lighty13"}*//
+/**
+ * @name BetterImageViewer
+ * @version 1.5.10
+ * @invite NYvWdN5
+ * @donate https://paypal.me/lighty13
+ * @website https://1lighty.github.io/BetterDiscordStuff/?plugin=BetterImageViewer
+ * @source https://github.com/1Lighty/BetterDiscordPlugins/blob/master/Plugins/BetterImageViewer/BetterImageViewer.plugin.js
+ */
 /*@cc_on
 @if (@_jscript)
 
@@ -37,21 +44,21 @@ module.exports = (() => {
           twitter_username: ''
         }
       ],
-      version: '1.5.8',
+      version: '1.5.10',
       description: 'Move between images in the entire channel with arrow keys, image zoom enabled by clicking and holding, scroll wheel to zoom in and out, hold shift to change lens size. Image previews will look sharper no matter what scaling you have, and will take up as much space as possible.',
       github: 'https://github.com/1Lighty',
-      github_raw: 'https://raw.githubusercontent.com/1Lighty/BetterDiscordPlugins/master/Plugins/BetterImageViewer/BetterImageViewer.plugin.js'
+      github_raw: 'https://raw.githubusercontent.com/MIHAIdavid22/BetterDiscordPlugins/patch-1/Plugins/BetterImageViewer/BetterImageViewer.plugin.js'
     },
     changelog: [
       {
         title: 'Fixed',
         type: 'fixed',
-        items: ['Misc fixes.']
+        items: ['Fixed not being able to zoom in when using the Powercord plugin `Smooth Scrolling` by `Hot Tutorials`.']
       },
       {
         title: 'Meow',
         type: 'fixed',
-        items: ['Avkhy was everywhere.']
+        items: ['Contact Avkhy and say they\'re cute! :heart:']
       }
     ],
     defaultConfig: [
@@ -335,7 +342,7 @@ module.exports = (() => {
         if (this.__BIV_crash) return;
         window.addEventListener('mouseup', this.handleMouseUp);
         window.addEventListener('mousemove', this.handleMouseMove);
-        window.addEventListener('mousewheel', this.handleMouseWheel);
+        window.addEventListener('wheel', this.handleMouseWheel);
         this.getRawImage();
       }
       componentWillUnmount() {
@@ -343,7 +350,7 @@ module.exports = (() => {
         if (this.__BIV_crash) return;
         window.removeEventListener('mouseup', this.handleMouseUp);
         window.removeEventListener('mousemove', this.handleMouseMove);
-        window.removeEventListener('mousewheel', this.handleMouseWheel);
+        window.removeEventListener('wheel', this.handleMouseWheel);
         this._handleSaveLensWHChangeDC.cancel();
         this._handleSaveLensWHChange();
         this._controller.dispose();
@@ -688,7 +695,8 @@ module.exports = (() => {
 
     const MessageTimestamp = (() => {
       try {
-        const MessageTimestamp = WebpackModules.getByProps('MessageTimestamp').MessageTimestamp;
+        const a = WebpackModules.getByProps('MessageTimestamp');
+        const MessageTimestamp = (a && a.MessageTimestamp) || WebpackModules.getByDisplayName('MessageTimestamp');
         if (!MessageTimestamp) throw 'MessageTimestamp is undefined';
         return MessageTimestamp;
       } catch (e) {
@@ -1378,7 +1386,15 @@ module.exports = (() => {
     return class BetterImageViewer extends Plugin {
       constructor() {
         super();
-        XenoLib.changeName(__filename, this.name);
+        /*
+         * why are we letting Zere, the braindead American let control BD when he can't even
+         * fucking read clearly documented and well known standards, such as __filename being
+         * the files full fucking path and not just the filename itself, IS IT REALLY SO HARD
+         * TO FUCKING READ?! https://nodejs.org/api/modules.html#modules_filename
+         */
+        const _zerecantcode_path = require('path');
+        const theActualFileNameZere = _zerecantcode_path.join(__dirname, _zerecantcode_path.basename(__filename));
+        XenoLib.changeName(theActualFileNameZere, this.name);
         this.handleWHChange = this.handleWHChange.bind(this);
         this.showChangelog = this.showChangelog.bind(this);
         const oOnStart = this.onStart.bind(this);
@@ -2093,7 +2109,7 @@ module.exports = (() => {
       n = (n, e) => n && n._config && n._config.info && n._config.info.version && i(n._config.info.version, e),
       e = BdApi.Plugins.get('ZeresPluginLibrary'),
       o = BdApi.Plugins.get('XenoLib');
-    n(e, '1.2.27') && (ZeresPluginLibraryOutdated = !0), n(o, '1.3.35') && (XenoLibOutdated = !0);
+    n(e, '1.2.29') && (ZeresPluginLibraryOutdated = !0), n(o, '1.3.36') && (XenoLibOutdated = !0);
   } catch (i) {
     console.error('Error checking if libraries are out of date', i);
   }
