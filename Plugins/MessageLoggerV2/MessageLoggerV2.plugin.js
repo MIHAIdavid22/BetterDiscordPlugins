@@ -1,4 +1,11 @@
-//META{"name":"MessageLoggerV2","source":"https://github.com/1Lighty/BetterDiscordPlugins/blob/master/Plugins/MessageLoggerV2/MessageLoggerV2.plugin.js","website":"https://1lighty.github.io/BetterDiscordStuff/?plugin=MessageLoggerV2","authorId":"239513071272329217","invite":"NYvWdN5","donate":"https://paypal.me/lighty13"}*//
+/**
+ * @name MessageLoggerV2
+ * @version 1.7.71
+ * @invite NYvWdN5
+ * @donate https://paypal.me/lighty13
+ * @website https://1lighty.github.io/BetterDiscordStuff/?plugin=MessageLoggerV2
+ * @source https://github.com/1Lighty/BetterDiscordPlugins/blob/master/Plugins/MessageLoggerV2/MessageLoggerV2.plugin.js
+ */
 /*@cc_on
 @if (@_jscript)
   // Offer to self-install for clueless users that try to run this directly.
@@ -24,12 +31,13 @@
 // special edited message https://i.clouds.tf/guli/mric.png
 // modal for checking which servers/channels/users are blacklisted/whitelisted
 // option to show all hidden
+
 module.exports = class MessageLoggerV2 {
   getName() {
     return 'MessageLoggerV2';
   }
   getVersion() {
-    return '1.7.68';
+    return '1.7.71';
   }
   getAuthor() {
     return 'Lighty';
@@ -169,21 +177,24 @@ module.exports = class MessageLoggerV2 {
   getChanges() {
     return [
       {
-        title: 'RIP BBD on Canary and PTB',
+        title: '#justblamezeretf',
         type: 'fixed',
-        items: ['Fixed not working on canary.']
-      },
-      {
-        title: 'Meow',
-        type: 'added',
-        items: ['Avkhy was here.']
+        items: ['Fixed some misc styling issues.']
       }
     ];
   }
   initialize() {
     if (this.__started) return XenoLib.Notifications.warning(`[**${this.getName()}**] Tried to start twice..`, { timeout: 0 });
     this.__started = true;
-    XenoLib.changeName(__filename, 'MessageLoggerV2'); /* To everyone who renames plugins: FUCK YOU! */
+    /*
+     * why are we letting Zere, the braindead American let control BD when he can't even
+     * fucking read clearly documented and well known standards, such as __filename being
+     * the files full fucking path and not just the filename itself, IS IT REALLY SO HARD
+     * TO FUCKING READ?! https://nodejs.org/api/modules.html#modules_filename
+     */
+    const _zerecantcode_path = require('path');
+    const theActualFileNameZere = _zerecantcode_path.join(__dirname, _zerecantcode_path.basename(__filename));
+    XenoLib.changeName(theActualFileNameZere, 'MessageLoggerV2'); /* To everyone who renames plugins: FUCK YOU! */
     try {
       ZeresPluginLibrary.WebpackModules.getByProps('openModal', 'hasModalOpen').closeModal(`${this.getName()}_DEP_MODAL`);
     } catch (e) { }
@@ -547,7 +558,7 @@ module.exports = class MessageLoggerV2 {
       tabBarItem: ZeresPluginLibrary.DiscordClassModules.UserModal.tabBarItem,
       tabBarContainer: ZeresPluginLibrary.DiscordClassModules.UserModal.tabBarContainer,
       tabBar: ZeresPluginLibrary.DiscordClassModules.UserModal.tabBar,
-      edited: ZeresPluginLibrary.WebpackModules.getByProps('edited').edited,
+      edited: XenoLib.joinClassNames(XenoLib.getClass('separator timestamp'), XenoLib.getClass('separator timestampInline')),
       markup: ZeresPluginLibrary.WebpackModules.getByProps('markup')['markup'],
       message: {
         cozy: {
@@ -591,7 +602,7 @@ module.exports = class MessageLoggerV2 {
       questionMarkSingle: XenoLib.getSingleClass('questionMark')
     };
 
-    const TabBarStuffs = ZeresPluginLibrary.WebpackModules.getByProps('tabBarItem');
+    const TabBarStuffs = ZeresPluginLibrary.WebpackModules.getByProps('tabBarItem', 'tabBarContainer');
 
     this.createHeader.classes = {
       itemTabBarItem: TabBarStuffs.tabBarItem + ' ' + ZeresPluginLibrary.WebpackModules.find(m => m.item && m.selected && m.topPill).item,
@@ -811,7 +822,7 @@ module.exports = class MessageLoggerV2 {
     this.unpatches.push(
       this.Patcher.instead(ZeresPluginLibrary.WebpackModules.getByDisplayName('LazyImage').prototype, 'getSrc', (thisObj, args, original) => {
         let indx;
-        if (((indx = thisObj.props.src.indexOf('?ML2=true')), indx !== -1)) return thisObj.props.src.substr(0, indx);
+        if (thisObj && thisObj.props && thisObj.props.src && ((indx = thisObj.props.src.indexOf('?ML2=true')), indx !== -1)) return thisObj.props.src.substr(0, indx);
         return original(...args);
       })
     );
@@ -973,7 +984,15 @@ module.exports = class MessageLoggerV2 {
           }
           if (!ZeresPluginLibrary.PluginUpdater.defaultComparator(this.getVersion(), ZeresPluginLibrary.PluginUpdater.defaultVersioner(body))) return;
           const fs = require('fs');
-          fs.writeFileSync(__filename, body);
+          /*
+           * why are we letting Zere, the braindead American let control BD when he can't even
+           * fucking read clearly documented and well known standards, such as __filename being
+           * the files full fucking path and not just the filename itself, IS IT REALLY SO HARD
+           * TO FUCKING READ?! https://nodejs.org/api/modules.html#modules_filename
+           */
+          const _zerecantcode_path = require('path');
+          const theActualFileNameZere = _zerecantcode_path.join(__dirname, _zerecantcode_path.basename(__filename));
+          fs.writeFileSync(theActualFileNameZere, body);
           XenoLib.Notifications.success(`[${this.getName()}] Successfully updated!`, { timeout: 0 });
           if (BdApi.isSettingEnabled('fork-ps-5') && !this.__isPowerCord) return;
           BdApi.Plugins.reload(this.getName());
@@ -2284,14 +2303,18 @@ module.exports = class MessageLoggerV2 {
   }
   cacheImage(url, attachmentIdx, attachmentId, messageId, channelId, attempts = 0) {
     this.nodeModules.request({ url: url, encoding: null }, (err, res, buffer) => {
-      if (err || res.statusCode != 200) {
-        if (res.statusCode == 404 || res.statusCode == 403) return;
-        attempts++;
-        if (attempts > 3) return ZeresPluginLibrary.Logger.warn(this.getName(), `Failed to get image ${attachmentId} for caching, error code ${res.statusCode}`);
-        return setTimeout(() => this.cacheImage(url, attachmentIdx, attachmentId, messageId, channelId, attempts), 1000);
+      try {
+        if (err || res.statusCode != 200) {
+          if (res.statusCode == 404 || res.statusCode == 403) return;
+          attempts++;
+          if (attempts > 3) return ZeresPluginLibrary.Logger.warn(this.getName(), `Failed to get image ${attachmentId} for caching, error code ${res.statusCode}`);
+          return setTimeout(() => this.cacheImage(url, attachmentIdx, attachmentId, messageId, channelId, attempts), 1000);
+        }
+        const fileExtension = url.match(/\.[0-9a-z]+$/i)[0];
+        this.nodeModules.fs.writeFileSync(this.settings.imageCacheDir + `/${attachmentId}${fileExtension}`, buffer, { encoding: null });
+      } catch (err) {
+        console.error('Failed to save image cache', err.message);
       }
-      const fileExtension = url.match(/\.[0-9a-z]+$/i)[0];
-      this.nodeModules.fs.writeFileSync(this.settings.imageCacheDir + `/${attachmentId}${fileExtension}`, buffer, { encoding: null });
     });
   }
   cacheMessageImages(message) {
@@ -2410,7 +2433,7 @@ module.exports = class MessageLoggerV2 {
             }
           }
           if (found) continue;
-          this.nodeModules.fs.unlink(`${this.settings.imageCacheDir}/${img}`, e => e && ZeresPluginLibrary.Logger.err(this.getName(), 'Error deleting unreferenced image, what the shit', e));
+          this.nodeModules.fs.unlink(`${this.settings.imageCacheDir}/${img}`, e => e && ZeresPluginLibrary.Logger.err(this.getName(), 'Error deleting unreferenced image, what the shit', e.message));
         }
       }
       // 10 minutes
@@ -3182,7 +3205,7 @@ module.exports = class MessageLoggerV2 {
         /* 2 */ XenoLib.getClass('username header'),
         /* 3 */ XenoLib.joinClassNames(XenoLib.getClass('clickable avatar'), XenoLib.getClass('avatar clickable')),
         /* 4 */ XenoLib.joinClassNames(XenoLib.getClass('timestampTooltip username'), XenoLib.getClass('avatar clickable')),
-        /* 5 */ XenoLib.getClass('separator timestamp'),
+        /* 5 */ XenoLib.joinClassNames(XenoLib.getClass('separator timestamp'), XenoLib.getClass('separator timestampInline')),
         /* 6 */ XenoLib.joinClassNames(this.multiClasses.markup, XenoLib.getClass('buttonContainer markupRtl')),
         /* 7 */ XenoLib.getClass('embedWrapper container'),
         /* 8 */ XenoLib.joinClassNames(XenoLib.getClass('zalgo latin24CompactTimeStamp'), XenoLib.getClass('separator timestamp'), XenoLib.getClass('alt timestampVisibleOnHover'), XenoLib.getClass('timestampVisibleOnHover alt')),
@@ -3673,10 +3696,14 @@ module.exports = class MessageLoggerV2 {
                 }
                 if (record) {
                   this.nodeModules.request.head(attachment.url, (err, res) => {
-                    if (err || res.statusCode != 404) return;
-                    record.message.attachments[idx].url = 'ERROR';
-                    img.src = 'http://localhost:7474/' + attachment.id + attachment.filename.match(/\.[0-9a-z]+$/)[0];
-                    img.triedCache = true;
+                    try {
+                      if (err || res.statusCode != 404) return;
+                      record.message.attachments[idx].url = 'ERROR';
+                      img.src = 'http://localhost:7474/' + attachment.id + attachment.filename.match(/\.[0-9a-z]+$/)[0];
+                      img.triedCache = true;
+                    } catch (err) {
+                      console.error('Failed loading cached image', err.message);
+                    }
                   });
                 }
               };
@@ -4170,29 +4197,33 @@ module.exports = class MessageLoggerV2 {
                   defaultPath: record.message.attachments[attachmentIdx].filename
                 })
                 .then(({ filePath: dir }) => {
-                  if (!dir) return;
-                  const attemptToUseCached = () => {
-                    const srcFile = `${this.settings.imageCacheDir}/${attachmentId}${record.message.attachments[attachmentIdx].filename.match(/\.[0-9a-z]+$/)[0]}`;
-                    if (!this.nodeModules.fs.existsSync(srcFile)) return this.showToast('Image does not exist locally!', { type: 'error', timeout: 5000 });
-                    this.nodeModules.fs.copyFileSync(srcFile, dir);
-                    this.showToast('Saved!', { type: 'success' });
-                  };
-                  if (isCached) {
-                    attemptToUseCached();
-                  } else {
-                    const req = this.nodeModules.request(record.message.attachments[attachmentIdx].url);
-                    req.on('response', res => {
-                      if (res.statusCode == 200) {
-                        req
-                          .pipe(this.nodeModules.fs.createWriteStream(dir))
-                          .on('finish', () => this.showToast('Saved!', { type: 'success' }))
-                          .on('error', () => this.showToast('Failed to save! No permissions.', { type: 'error', timeout: 5000 }));
-                      } else if (res.statusCode == 404) {
-                        attemptToUseCached();
-                      } else {
-                        attemptToUseCached();
-                      }
-                    });
+                  try {
+                    if (!dir) return;
+                    const attemptToUseCached = () => {
+                      const srcFile = `${this.settings.imageCacheDir}/${attachmentId}${record.message.attachments[attachmentIdx].filename.match(/\.[0-9a-z]+$/)[0]}`;
+                      if (!this.nodeModules.fs.existsSync(srcFile)) return this.showToast('Image does not exist locally!', { type: 'error', timeout: 5000 });
+                      this.nodeModules.fs.copyFileSync(srcFile, dir);
+                      this.showToast('Saved!', { type: 'success' });
+                    };
+                    if (isCached) {
+                      attemptToUseCached();
+                    } else {
+                      const req = this.nodeModules.request(record.message.attachments[attachmentIdx].url);
+                      req.on('response', res => {
+                        if (res.statusCode == 200) {
+                          req
+                            .pipe(this.nodeModules.fs.createWriteStream(dir))
+                            .on('finish', () => this.showToast('Saved!', { type: 'success' }))
+                            .on('error', () => this.showToast('Failed to save! No permissions.', { type: 'error', timeout: 5000 }));
+                        } else if (res.statusCode == 404) {
+                          attemptToUseCached();
+                        } else {
+                          attemptToUseCached();
+                        }
+                      });
+                    }
+                  } catch (err) {
+                    console.error('Failed saving', err.message);
                   }
                 });
             },
@@ -4215,20 +4246,24 @@ module.exports = class MessageLoggerV2 {
                 const process = require('process');
                 // ImageToClipboard by Zerebos
                 this.nodeModules.request({ url: record.message.attachments[attachmentIdx].url, encoding: null }, (error, response, buffer) => {
-                  if (error || response.statusCode != 200) {
-                    this.showToast('Failed to copy. Image may not exist. Attempting to use local image cache.', { type: 'error' });
-                    attemptToUseCached();
-                    return;
+                  try {
+                    if (error || response.statusCode != 200) {
+                      this.showToast('Failed to copy. Image may not exist. Attempting to use local image cache.', { type: 'error' });
+                      attemptToUseCached();
+                      return;
+                    }
+                    if (process.platform === 'win32' || process.platform === 'darwin') {
+                      clipboard.write({ image: nativeImage.createFromBuffer(buffer) });
+                    } else {
+                      const file = path.join(process.env.HOME, 'ml2temp.png');
+                      this.nodeModules.fs.writeFileSync(file, buffer, { encoding: null });
+                      clipboard.write({ image: file });
+                      this.nodeModules.fs.unlinkSync(file);
+                    }
+                    this.showToast('Copied!', { type: 'success' });
+                  } catch (err) {
+                    console.error('Failed to cached', err.message);
                   }
-                  if (process.platform === 'win32' || process.platform === 'darwin') {
-                    clipboard.write({ image: nativeImage.createFromBuffer(buffer) });
-                  } else {
-                    const file = path.join(process.env.HOME, 'ml2temp.png');
-                    this.nodeModules.fs.writeFileSync(file, buffer, { encoding: null });
-                    clipboard.write({ image: file });
-                    this.nodeModules.fs.unlinkSync(file);
-                  }
-                  this.showToast('Copied!', { type: 'success' });
                 });
               }
             },
